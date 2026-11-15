@@ -48,6 +48,36 @@ function publicAudioUrl(path: string) {
   return supabase.storage.from("voxurn-audio").getPublicUrl(path).data.publicUrl;
 }
 
+function AudioPlayer({ src, label, compact = false }: { src: string; label: string; compact?: boolean }) {
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const pauseOtherAudio = (current: HTMLAudioElement) => {
+    document.querySelectorAll("audio").forEach((audio) => {
+      if (audio !== current) audio.pause();
+    });
+    setIsPlaying(true);
+  };
+
+  return (
+    <div className={`audio-player real-audio-player audio-control ${compact ? "audio-control-compact" : ""} ${isPlaying ? "audio-is-playing" : ""}`}>
+      <div className="audio-status">
+        <AudioLines size={14} />
+        <span>{isPlaying ? "REPRODUCIENDO" : label}</span>
+        {isPlaying && <span className="audio-live-dot" />}
+      </div>
+      <audio
+        controls
+        preload="none"
+        src={src}
+        aria-label={label}
+        onPlay={(event) => pauseOtherAudio(event.currentTarget)}
+        onPause={() => setIsPlaying(false)}
+        onEnded={() => setIsPlaying(false)}
+      />
+    </div>
+  );
+}
+
 function AudioPost({ post, onReply, onTopic }: { post: Post; onReply: (id: string) => void; onTopic: (topic: string) => void }) {
   const [showReplies, setShowReplies] = useState(false);
   return (
@@ -62,9 +92,7 @@ function AudioPost({ post, onReply, onTopic }: { post: Post; onReply: (id: strin
         <span className="duration">{formatDuration(post.duration_seconds)}</span>
       </div>
       {post.text && <p className="post-text">{post.text}</p>}
-      <div className="audio-player real-audio-player">
-        <audio controls preload="none" src={publicAudioUrl(post.audio_path)} aria-label="Audio publicado" />
-      </div>
+      <AudioPlayer src={publicAudioUrl(post.audio_path)} label="AUDIO DE LA PUBLICACIÓN" />
       <div className="post-bottom">
         <div className="tag-list">{post.tags.map((tag) => <span className="tag" key={tag}>#{tag}</span>)}</div>
         <div className="post-actions">
@@ -82,7 +110,7 @@ function AudioPost({ post, onReply, onTopic }: { post: Post; onReply: (id: strin
             <div className="reply-audio" key={reply.id}>
               <span className="reply-anonymous"><AudioLines size={13} /> respuesta anónima</span>
               <span className="duration">{formatDuration(reply.duration_seconds)}</span>
-              <audio controls preload="none" src={publicAudioUrl(reply.audio_path)} aria-label="Respuesta de audio" />
+              <AudioPlayer src={publicAudioUrl(reply.audio_path)} label="RESPUESTA DE AUDIO" compact />
             </div>
           ))}
         </div>
