@@ -119,7 +119,7 @@ export default function App() {
       .order("created_at", { ascending: false })
       .limit(50);
     if (error) {
-      setLoadError("No pudimos cargar las voces. Revisá que hayas ejecutado la migración SQL de Voxurn en Supabase.");
+      setLoadError(`Supabase respondió: ${error.message} (código ${error.code || "sin código"}). Si indica que no existe la tabla posts o la relación replies, falta ejecutar la migración SQL.`);
       setIsLoading(false);
       return;
     }
