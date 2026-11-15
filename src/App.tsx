@@ -12,6 +12,8 @@ import {
   ArrowUpRight,
   Plus,
   Menu,
+  Moon,
+  Sun,
 } from "lucide-react";
 
 type Post = {
@@ -101,12 +103,23 @@ export default function App() {
   const [activeTopic, setActiveTopic] = useState("todos");
   const [activeNav, setActiveNav] = useState("feed");
   const [search, setSearch] = useState("");
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("voxurn-theme") === "dark");
+
+  const toggleTheme = () => {
+    setDarkMode((current) => {
+      const next = !current;
+      localStorage.setItem("voxurn-theme", next ? "dark" : "light");
+      return next;
+    });
+  };
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell ${darkMode ? "theme-dark" : ""}`}>
+      
       <header className="topbar">
         <a className="wordmark" href="/" aria-label="Voxurn inicio">VOXURN<span>.</span></a>
         <div className="topbar-center"><span className="live-dot" /> UN LUGAR PARA SER ESCUCHADO</div>
+        <button className="theme-toggle" onClick={toggleTheme} aria-label={darkMode ? "Activar modo claro" : "Activar modo oscuro"} title={darkMode ? "Modo claro" : "Modo oscuro"}>{darkMode ? <Sun size={18} /> : <Moon size={18} />}</button>
         <button className="icon-button mobile-menu" aria-label="Abrir menú"><Menu size={20} /></button>
         <button className="publish-top" onClick={() => setActiveNav("publish")}><Plus size={16} /> Publicar audio</button>
       </header>
