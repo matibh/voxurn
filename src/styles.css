@@ -218,3 +218,8 @@ button{color:inherit}
 .theme-dark .category-label{background:#eee;color:#111}
 .theme-dark .topic-picker-label{color:#999}
 @media(max-width:700px){.topic-picker-label,.topic-picker{max-width:none}.sidebar-note{display:none}}
+
+
+/* Global feed: make each post's section visible at a glance */
+.post-topic-badge{display:inline-flex;align-items:center;margin-left:4px;padding:4px 7px;border:1px solid var(--line);color:#555;font-size:9px;font-weight:600;line-height:1.2}
+.theme-dark .post-topic-badge{border-color:#444;color:#ccc}
