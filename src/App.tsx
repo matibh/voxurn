@@ -48,7 +48,7 @@ function publicAudioUrl(path: string) {
   return supabase.storage.from("voxurn-audio").getPublicUrl(path).data.publicUrl;
 }
 
-function AudioPost({ post, onReply }: { post: Post; onReply: (id: string) => void }) {
+function AudioPost({ post, onReply, onTopic }: { post: Post; onReply: (id: string) => void; onTopic: (topic: string) => void }) {
   const [showReplies, setShowReplies] = useState(false);
   return (
     <article className="post">
@@ -57,7 +57,7 @@ function AudioPost({ post, onReply }: { post: Post; onReply: (id: string) => voi
         <span className="post-anonymous">voz anónima</span>
         <span className="post-dot">·</span>
         <time>{relativeTime(post.created_at)}</time>
-        <span className="post-topic-badge">{post.topic || "Joker's Club"}</span>
+        <button className="post-topic-badge" onClick={() => onTopic(post.topic || "Joker's Club")} aria-label={`Ver sección ${post.topic || "Joker's Club"}`}>{post.topic || "Joker's Club"}</button>
         <span className="post-spacer" />
         <span className="duration">{formatDuration(post.duration_seconds)}</span>
       </div>
@@ -66,7 +66,7 @@ function AudioPost({ post, onReply }: { post: Post; onReply: (id: string) => voi
         <audio controls preload="none" src={publicAudioUrl(post.audio_path)} aria-label="Audio publicado" />
       </div>
       <div className="post-bottom">
-        <div className="tag-list"><span className="category-label">{post.topic || "Joker's Club"}</span>{post.tags.map((tag) => <span className="tag" key={tag}>#{tag}</span>)}</div>
+        <div className="tag-list"><button className="category-label" onClick={() => onTopic(post.topic || "Joker's Club")} aria-label={`Ver sección ${post.topic || "Joker's Club"}`}>{post.topic || "Joker's Club"}</button>{post.tags.map((tag) => <span className="tag" key={tag}>#{tag}</span>)}</div>
         <div className="post-actions">
           {post.replies.length > 0 && (
             <button className="reply-link" onClick={() => setShowReplies((value) => !value)}>
@@ -331,7 +331,7 @@ export default function App() {
               {isLoading ? <div className="empty-state"><RefreshCw size={18} className="spin-icon" /> Cargando voces...</div>
                 : loadError ? <div className="empty-state">{loadError}<button className="retry-button" onClick={() => void loadPosts()}>Reintentar</button></div>
                 : visiblePosts.length === 0 ? <div className="empty-state">Todavía no hay voces por acá. Podés ser la primera.</div>
-                : <div className="posts-list">{visiblePosts.map((post) => <AudioPost key={post.id} post={post} onReply={(id) => { setReplyTarget(id); setActiveNav("publish"); setActionError(""); }} />)}</div>}
+                : <div className="posts-list">{visiblePosts.map((post) => <AudioPost key={post.id} post={post} onTopic={(topic) => { setActiveTopic(topic); setActiveNav("feed"); setMenuOpen(false); window.scrollTo({ top: 0, behavior: "smooth" }); }} onReply={(id) => { setReplyTarget(id); setActiveNav("publish"); setActionError(""); }} />)}</div>}
             </>
           )}
           <footer className="footer"><span>VOXURN © 2026</span><span>HECHO PARA ESCUCHAR.</span></footer>
