@@ -222,7 +222,7 @@ button{color:inherit}
 
 /* Global feed: make each post's section visible at a glance */
 .post-topic-badge{display:inline-flex;align-items:center;margin-left:4px;padding:4px 7px;border:1px solid var(--line);color:#555;font-size:9px;font-weight:600;line-height:1.2}
-.theme-dark .post-topic-badge{border-color:#444;color:#ccc}
+.theme-dark .post-topic-badge{border-color:#eee;background:#eee;color:#111}
 
 
 /* Topic labels are navigation links into their matching section */
