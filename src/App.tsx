@@ -66,7 +66,7 @@ function AudioPost({ post, onReply, onTopic }: { post: Post; onReply: (id: strin
         <audio controls preload="none" src={publicAudioUrl(post.audio_path)} aria-label="Audio publicado" />
       </div>
       <div className="post-bottom">
-        <div className="tag-list"><button type="button" className="category-label" onClick={(event) => { event.preventDefault(); event.stopPropagation(); onTopic(post.topic || "Joker's Club"); }} aria-label={`Ver sección ${post.topic || "Joker's Club"}`}>{post.topic || "Joker's Club"}</button>{post.tags.map((tag) => <span className="tag" key={tag}>#{tag}</span>)}</div>
+        <div className="tag-list">{post.tags.map((tag) => <span className="tag" key={tag}>#{tag}</span>)}</div>
         <div className="post-actions">
           {post.replies.length > 0 && (
             <button className="reply-link" onClick={() => setShowReplies((value) => !value)}>
