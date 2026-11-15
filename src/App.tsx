@@ -50,10 +50,9 @@ function publicAudioUrl(path: string) {
 
 function AudioPlayer({ label, compact = false, onPlay }: { label: string; compact?: boolean; onPlay: () => void }) {
   return (
-    <button type="button" className={`audio-player audio-control audio-control-trigger ${compact ? "audio-control-compact" : ""}`} onClick={onPlay}>
-      <span className="audio-control-icon"><Play size={15} fill="currentColor" /></span>
-      <span className="audio-control-copy"><strong>{label}</strong><small>ESCUCHAR EN EL REPRODUCTOR</small></span>
-      <AudioLines size={17} />
+    <button type="button" className={`audio-player audio-control audio-control-trigger ${compact ? "audio-control-compact" : ""}`} onClick={onPlay} aria-label={label}>
+      <span className="audio-control-icon"><Play size={12} fill="currentColor" /></span>
+      <span className="audio-control-copy"><strong>Escuchar</strong></span>
     </button>
   );
 }
