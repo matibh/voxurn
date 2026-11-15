@@ -68,8 +68,6 @@ function AudioPost({ post, onReply, onTopic, onPlay, currentTrack, isTrackPlayin
         <span className="post-dot">·</span>
         <time>{relativeTime(post.created_at)}</time>
         <button type="button" className="post-topic-badge" onClick={(event) => { event.preventDefault(); event.stopPropagation(); onTopic(post.topic || "Joker's Club"); }} aria-label={`Ver sección ${post.topic || "Joker's Club"}`}>{post.topic || "Joker's Club"}</button>
-        <span className="post-spacer" />
-        <span className="duration">{formatDuration(post.duration_seconds)}</span>
       </div>
       {post.text && <p className="post-text">{post.text}</p>}
       <AudioPlayer label="Escuchar publicación" duration={post.duration_seconds} className={!post.text?.trim() ? "editorial-audio-no-text" : ""} active={currentTrack?.src === publicAudioUrl(post.audio_path)} playing={isTrackPlaying} onPlay={() => onPlay(publicAudioUrl(post.audio_path), post.text?.trim() || "Voz anónima", post.topic || "Joker's Club")} />
@@ -87,7 +85,6 @@ function AudioPost({ post, onReply, onTopic, onPlay, currentTrack, isTrackPlayin
           {post.replies.map((reply) => (
             <div className="reply-audio" key={reply.id}>
               <span className="reply-anonymous"><AudioLines size={13} /> respuesta anónima</span>
-              <span className="duration">{formatDuration(reply.duration_seconds)}</span>
               <AudioPlayer label="Escuchar respuesta" duration={reply.duration_seconds} compact active={currentTrack?.src === publicAudioUrl(reply.audio_path)} playing={isTrackPlaying} onPlay={() => onPlay(publicAudioUrl(reply.audio_path), "Respuesta anónima", post.topic || "Joker's Club")} />
             </div>
           ))}
