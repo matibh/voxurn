@@ -33,6 +33,7 @@
 - [ ] Evaluar bucket privado con URLs firmadas versus bucket público. Hoy voxurn-audio es público.
 - [ ] Implementar límites de frecuencia y protección anti-spam.
 - [ ] Revisar logs, accesos administrativos, secretos, backups, actualizaciones y respuesta a incidentes.
+- [ ] Supabase está configurado en São Paulo, Brasil. Brasil no figura en la lista de países adecuados publicada por AAIP consultada; analizar art. 12 Ley 25.326 y documentar mecanismo válido de transferencia (cláusulas contractuales modelo u otra base jurídica válida) con abogado antes del lanzamiento.
 - [ ] Revisar proveedores, subencargados, ubicación y transferencias internacionales (Supabase, GitHub Pages, Google Fonts).
 - [ ] Actualizar política antes de incorporar analítica, publicidad, cookies o SDK.
 - [ ] Evaluar obligaciones AAIP y Ley 25.326.
