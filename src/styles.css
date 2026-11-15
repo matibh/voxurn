@@ -229,3 +229,18 @@ button{color:inherit}
 .post-topic-badge,.category-label{font-family:inherit;cursor:pointer;transition:opacity .15s ease}
 .post-topic-badge:hover,.category-label:hover{opacity:.68}
 .post-topic-badge:focus-visible,.category-label:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+
+
+/* Voxurn listening experience */
+.audio-control{display:flex;flex-direction:column;align-items:stretch;gap:5px;padding:8px 11px 7px;min-height:70px;height:auto;border:1px solid transparent;transition:border-color .18s ease,background .18s ease}
+.audio-status{display:flex;align-items:center;gap:7px;min-height:15px;color:#888;font:9px 'DM Mono',monospace;letter-spacing:.8px}
+.audio-control audio{display:block;width:100%;height:34px;min-width:0}
+.audio-control.audio-is-playing{border-color:#c9c9c9;background:#f2f2f2}
+.audio-live-dot{width:6px;height:6px;border-radius:50%;background:#111;animation:audio-pulse 1.2s ease-in-out infinite}
+.audio-control-compact{grid-column:1/-1;width:100%;min-height:64px}
+.audio-control-compact audio{height:32px}
+@keyframes audio-pulse{50%{opacity:.25}}
+.theme-dark .audio-control.audio-is-playing{border-color:#555;background:#242424}
+.theme-dark .audio-status{color:#aaa}
+.theme-dark .audio-live-dot{background:#eee}
+@media(max-width:700px){.audio-control{padding:7px 8px;min-height:66px}.audio-control audio{height:32px}}
