@@ -7,6 +7,7 @@ create table if not exists public.posts (
   audio_path text not null,
   duration_seconds integer not null check (duration_seconds > 0),
   tags text[] not null default '{}',
+  topic text not null default 'Joker''s Club',
   created_at timestamptz not null default now()
 );
 
@@ -18,6 +19,9 @@ create table if not exists public.replies (
   created_at timestamptz not null default now()
 );
 
+alter table public.posts add column if not exists topic text not null default 'Joker''s Club';
+
+create index if not exists posts_topic_created_at_idx on public.posts (topic, created_at desc);
 create index if not exists posts_created_at_idx on public.posts (created_at desc);
 create index if not exists replies_post_id_created_at_idx on public.replies (post_id, created_at asc);
 
