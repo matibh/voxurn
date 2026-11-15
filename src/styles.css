@@ -279,3 +279,24 @@ button{color:inherit}
   .mini-player-text strong{font-size:11px}
   .mini-player-controls{height:34px;max-width:none}
 }
+
+
+/* Editorial inline audio control */
+.editorial-audio{width:100%;min-height:48px;height:48px;padding:0 2px;display:flex;align-items:center;gap:14px;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:0;background:transparent;color:inherit;cursor:pointer;text-align:left;transition:opacity .18s ease}
+.editorial-audio:hover{opacity:.72}
+.editorial-play{width:29px;height:29px;display:grid;place-items:center;flex:none;border:1px solid currentColor;border-radius:50%;background:transparent;color:inherit}
+.editorial-waveform{height:30px;display:flex;align-items:center;justify-content:space-between;gap:3px;flex:1;max-width:250px;overflow:hidden}
+.editorial-waveform i{display:block;width:2px;min-width:2px;background:#999;border-radius:2px;opacity:.72;transition:background .2s ease,opacity .2s ease}
+.editorial-audio-active .editorial-waveform i{background:#111;opacity:1}
+.editorial-waveform.waveform-playing i{animation:editorial-wave 850ms ease-in-out infinite alternate}
+.editorial-waveform.waveform-playing i:nth-child(3n){animation-delay:-.35s}
+.editorial-waveform.waveform-playing i:nth-child(3n + 1){animation-delay:-.6s}
+@keyframes editorial-wave{from{transform:scaleY(.45)}to{transform:scaleY(1)}}
+.editorial-duration{font:10px 'DM Mono',monospace;color:#888;font-variant-numeric:tabular-nums;margin-left:auto}
+.editorial-audio-compact{grid-column:1/-1;width:100%;min-height:39px;height:39px;border-top:0;border-bottom:0;gap:10px}
+.editorial-audio-compact .editorial-play{width:25px;height:25px}
+.editorial-audio-compact .editorial-waveform{max-width:180px;height:25px}
+.editorial-audio-compact .editorial-waveform i{transform:scaleY(.78)}
+.theme-dark .editorial-waveform i{background:#777}
+.theme-dark .editorial-audio-active .editorial-waveform i{background:#eee}
+@media(max-width:700px){.editorial-audio{min-height:44px;height:44px;gap:11px}.editorial-waveform{max-width:none;gap:2px}.editorial-waveform i{width:2px;min-width:2px}}
