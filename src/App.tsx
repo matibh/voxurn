@@ -104,6 +104,7 @@ export default function App() {
   const [activeNav, setActiveNav] = useState("feed");
   const [search, setSearch] = useState("");
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("voxurn-theme") === "dark");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleTheme = () => {
     setDarkMode((current) => {
@@ -120,10 +121,18 @@ export default function App() {
         <a className="wordmark" href="/" aria-label="Voxurn inicio">VOXURN<span>.</span></a>
         <div className="topbar-center"><span className="live-dot" /> UN LUGAR PARA SER ESCUCHADO</div>
         <button className="theme-toggle" onClick={toggleTheme} aria-label={darkMode ? "Activar modo claro" : "Activar modo oscuro"} title={darkMode ? "Modo claro" : "Modo oscuro"}>{darkMode ? <Sun size={18} /> : <Moon size={18} />}</button>
-        <button className="icon-button mobile-menu" aria-label="Abrir menú"><Menu size={20} /></button>
+        <button className="icon-button mobile-menu" onClick={() => setMenuOpen((open) => !open)} aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"} aria-expanded={menuOpen}><Menu size={20} /></button>
         <button className="publish-top" onClick={() => setActiveNav("publish")}><Plus size={16} /> Publicar audio</button>
       </header>
 
+      {menuOpen && <div className="mobile-menu-panel">
+        <button onClick={() => { setActiveNav("feed"); setMenuOpen(false); }}> <Headphones size={17} /> Feed</button>
+        <button onClick={() => { setActiveNav("explore"); setMenuOpen(false); }}> <Compass size={17} /> Explorar</button>
+        <button onClick={() => { setActiveNav("publish"); setMenuOpen(false); }}> <Mic size={17} /> Publicar audio</button>
+        <div className="mobile-menu-divider" />
+        <span className="mobile-menu-label">TEMAS</span>
+        {topics.slice(1).map((topic) => <button key={topic} onClick={() => { setActiveTopic(topic); setActiveNav("feed"); setMenuOpen(false); }}><Hash size={15} /> {topic}</button>)}
+      </div>}
       <div className="layout">
         <aside className="sidebar">
           <div className="sidebar-label">DESCUBRIR</div>
@@ -200,9 +209,9 @@ export default function App() {
         </aside>
       </div>
       <nav className="mobile-nav">
-        <button onClick={() => setActiveNav("feed")}><Headphones size={19} /><span>Feed</span></button>
-        <button onClick={() => setActiveNav("explore")}><Compass size={19} /><span>Explorar</span></button>
-        <button onClick={() => setActiveNav("publish")}><Mic size={19} /><span>Publicar</span></button>
+        <button className={activeNav === "feed" ? "mobile-nav-active" : ""} onClick={() => setActiveNav("feed")}><Headphones size={19} /><span>Feed</span></button>
+        <button className={activeNav === "explore" ? "mobile-nav-active" : ""} onClick={() => setActiveNav("explore")}><Compass size={19} /><span>Explorar</span></button>
+        <button className={activeNav === "publish" ? "mobile-nav-active" : ""} onClick={() => setActiveNav("publish")}><Mic size={19} /><span>Publicar</span></button>
       </nav>
     </div>
   );
