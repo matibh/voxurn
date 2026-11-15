@@ -341,3 +341,7 @@ button{color:inherit}
 .post-actions{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .reply-link:disabled{opacity:.45;cursor:default;}
 @media(max-width:420px){.post-actions{gap:8px}.reply-link{font-size:9px}}
+
+
+/* Dark mode: keep the anonymous voice label clearly readable */
+.theme-dark .post-anonymous{color:#f2f2f2}
