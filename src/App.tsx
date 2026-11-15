@@ -362,7 +362,7 @@ export default function App() {
                 : <div className="posts-list">{visiblePosts.map((post) => <AudioPost key={post.id} post={post} onPlay={playTrack} currentTrack={currentTrack} isTrackPlaying={isTrackPlaying} onTopic={(topic) => { setActiveTopic(topic); setActiveNav("feed"); setMenuOpen(false); window.scrollTo({ top: 0, behavior: "smooth" }); }} onReply={(id) => { setReplyTarget(id); setActiveNav("publish"); setActionError(""); }} />)}</div>}
             </>
           )}
-          <footer className="footer"><span>VOXURN © 2026</span><span>HECHO PARA ESCUCHAR.</span></footer>
+          <footer className="footer"><span>VOXURN © 2026</span><span>HECHO PARA ESCUCHAR.</span><div className="legal-footer-links"><a href="/voxurn/legal/#terminos">Términos</a><a href="/voxurn/legal/#privacidad">Privacidad</a><a href="/voxurn/legal/#comunidad">Comunidad</a><a href="/voxurn/legal/#denuncias">Denuncias</a></div></footer>
         </main>
 
         <aside className="right-rail">
