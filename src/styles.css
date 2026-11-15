@@ -333,3 +333,11 @@ button{color:inherit}
 /* Balance spacing around the inline audio player */
 .post-text{margin-bottom:12px;}
 .post-bottom{margin-top:12px;}
+
+
+/* Reply controls: count/listen left, record reply right */
+.post-bottom{display:flex;flex-direction:column;align-items:stretch;gap:9px;}
+.post-bottom-no-tags{margin-top:5px;}
+.post-actions{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.reply-link:disabled{opacity:.45;cursor:default;}
+@media(max-width:420px){.post-actions{gap:8px}.reply-link{font-size:9px}}
