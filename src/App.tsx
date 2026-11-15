@@ -57,6 +57,7 @@ function AudioPost({ post, onReply }: { post: Post; onReply: (id: string) => voi
         <span className="post-anonymous">voz anónima</span>
         <span className="post-dot">·</span>
         <time>{relativeTime(post.created_at)}</time>
+        <span className="post-topic-badge">{post.topic || "Joker's Club"}</span>
         <span className="post-spacer" />
         <span className="duration">{formatDuration(post.duration_seconds)}</span>
       </div>
@@ -91,7 +92,7 @@ function AudioPost({ post, onReply }: { post: Post; onReply: (id: string) => voi
 }
 
 export default function App() {
-  const [activeTopic, setActiveTopic] = useState("Joker's Club");
+  const [activeTopic, setActiveTopic] = useState("todos");
   const [activeNav, setActiveNav] = useState("feed");
   const [search, setSearch] = useState("");
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("voxurn-theme") === "dark");
@@ -324,7 +325,7 @@ export default function App() {
           ) : (
             <>
               <div className="feed-controls">
-                <div className="filter-tabs"><button className={activeTopic === "Joker's Club" ? "filter-active" : ""} onClick={() => setActiveTopic("Joker's Club")}>Joker's Club</button><button className={activeTopic === "todos" ? "filter-active" : ""} onClick={() => setActiveTopic("todos")}>todos</button><button onClick={() => void loadPosts()}>actualizar</button></div>
+                <div className="filter-tabs"><button className={activeTopic === "todos" ? "filter-active" : ""} onClick={() => setActiveTopic("todos")}>Todos</button><button className={activeTopic === "Joker's Club" ? "filter-active" : ""} onClick={() => setActiveTopic("Joker's Club")}>Joker's Club</button><button onClick={() => void loadPosts()}>actualizar</button></div>
                 <span className="feed-count">VOCES DE LA COMUNIDAD</span>
               </div>
               {isLoading ? <div className="empty-state"><RefreshCw size={18} className="spin-icon" /> Cargando voces...</div>
