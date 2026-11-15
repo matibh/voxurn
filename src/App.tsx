@@ -18,11 +18,17 @@ type Post = {
   audio_path: string;
   duration_seconds: number;
   tags: string[];
+  topic: string;
   created_at: string;
   replies: Reply[];
 };
 
-const topics = ["todos", "pensamientos", "vida", "confesiones", "musica", "preguntas"];
+const topics = [
+  "Joker's Club", "Confesiones", "Amor y relaciones", "Vida cotidiana", "Humor",
+  "Desahogo", "Preguntas", "Opiniones", "Pensamientos", "Historias", "Música",
+  "Cine y series", "Gaming", "Tecnología", "Actualidad", "Trabajo y estudio",
+  "Arte y creatividad", "Filosofía",
+];
 
 function formatDuration(seconds: number) {
   const safe = Math.max(0, seconds || 0);
@@ -59,7 +65,7 @@ function AudioPost({ post, onReply }: { post: Post; onReply: (id: string) => voi
         <audio controls preload="none" src={publicAudioUrl(post.audio_path)} aria-label="Audio publicado" />
       </div>
       <div className="post-bottom">
-        <div className="tag-list">{post.tags.map((tag) => <span className="tag" key={tag}>#{tag}</span>)}</div>
+        <div className="tag-list"><span className="category-label">{post.topic || "Joker's Club"}</span>{post.tags.map((tag) => <span className="tag" key={tag}>#{tag}</span>)}</div>
         <div className="post-actions">
           {post.replies.length > 0 && (
             <button className="reply-link" onClick={() => setShowReplies((value) => !value)}>
@@ -85,7 +91,7 @@ function AudioPost({ post, onReply }: { post: Post; onReply: (id: string) => voi
 }
 
 export default function App() {
-  const [activeTopic, setActiveTopic] = useState("todos");
+  const [activeTopic, setActiveTopic] = useState("Joker's Club");
   const [activeNav, setActiveNav] = useState("feed");
   const [search, setSearch] = useState("");
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("voxurn-theme") === "dark");
@@ -95,6 +101,7 @@ export default function App() {
   const [loadError, setLoadError] = useState("");
   const [postText, setPostText] = useState("");
   const [tagInput, setTagInput] = useState("");
+  const [selectedTopic, setSelectedTopic] = useState("Joker's Club");
   const [recording, setRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
@@ -115,7 +122,7 @@ export default function App() {
     setLoadError("");
     const { data, error } = await supabase
       .from("posts")
-      .select("id,text,audio_path,duration_seconds,tags,created_at,replies(id,audio_path,duration_seconds,created_at)")
+      .select("id,text,audio_path,duration_seconds,tags,topic,created_at,replies(id,audio_path,duration_seconds,created_at)")
       .order("created_at", { ascending: false })
       .limit(50);
     if (error) {
@@ -204,10 +211,12 @@ export default function App() {
               audio_path: path,
               duration_seconds: duration,
               tags,
+              topic: selectedTopic,
             });
             if (error) throw error;
             setPostText("");
             setTagInput("");
+            setSelectedTopic("Joker's Club");
           }
           setReplyTarget(null);
           setActiveNav("feed");
@@ -236,8 +245,8 @@ export default function App() {
     }
   };
 
-  const visiblePosts = posts.filter((post) => activeTopic === "todos" || post.tags.includes(activeTopic));
-  const filteredTopics = topics.slice(1).filter((topic) => topic.includes(search.toLowerCase()));
+  const visiblePosts = posts.filter((post) => activeTopic === "todos" || (post.topic || "Joker's Club") === activeTopic);
+  const filteredTopics = topics.filter((topic) => topic.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <div className={`app-shell ${darkMode ? "theme-dark" : ""}`}>
@@ -255,7 +264,7 @@ export default function App() {
         <button onClick={() => { setActiveNav("publish"); setMenuOpen(false); }}><Mic size={17} /> Publicar audio</button>
         <div className="mobile-menu-divider" />
         <span className="mobile-menu-label">TEMAS</span>
-        {topics.slice(1).map((topic) => <button key={topic} onClick={() => { setActiveTopic(topic); setActiveNav("feed"); setMenuOpen(false); }}><Hash size={15} /> {topic}</button>)}
+        {topics.map((topic) => <button key={topic} onClick={() => { setActiveTopic(topic); setActiveNav("feed"); setMenuOpen(false); }}><Hash size={15} /> {topic}</button>)}
       </div>}
 
       <div className="layout">
@@ -265,7 +274,7 @@ export default function App() {
           <button className={`nav-item ${activeNav === "explore" ? "selected" : ""}`} onClick={() => setActiveNav("explore")}><Compass size={18} /> Explorar</button>
           <div className="sidebar-divider" />
           <div className="sidebar-label">TEMAS</div>
-          {topics.slice(1).map((topic) => <button key={topic} className={`topic-item ${activeTopic === topic ? "topic-selected" : ""}`} onClick={() => { setActiveTopic(topic); setActiveNav("feed"); }}><Hash size={14} /> {topic}</button>)}
+          {topics.map((topic) => <button key={topic} className={`topic-item ${activeTopic === topic ? "topic-selected" : ""}`} onClick={() => { setActiveTopic(topic); setActiveNav("feed"); }}><Hash size={14} /> {topic}</button>)}
           <div className="sidebar-note"><span className="note-line" />No necesitás un nombre para tener algo que decir.</div>
         </aside>
 
@@ -287,8 +296,10 @@ export default function App() {
               <h2>{replyTarget ? "Respondé con tu voz" : "¿Qué querés decir?"}</h2>
               <p>{replyTarget ? "Tu respuesta se publicará de forma anónima." : "Grabá un audio y compartilo con el mundo."}</p>
               {!replyTarget && <>
+                <label className="topic-picker-label" htmlFor="post-topic">ELEGÍ LA TEMÁTICA</label>
+                <select id="post-topic" className="topic-picker" value={selectedTopic} onChange={(event) => setSelectedTopic(event.target.value)} required>{topics.map((topic) => <option key={topic} value={topic}>{topic}{topic === "Joker's Club" ? " — general / off-topic" : ""}</option>)}</select>
                 <textarea className="composer-text" value={postText} onChange={(event) => setPostText(event.target.value)} maxLength={1000} placeholder="Podés agregar un texto (opcional)..." />
-                <input className="composer-tags" value={tagInput} onChange={(event) => setTagInput(event.target.value)} placeholder="Temas: pensamientos, vida, musica..." aria-label="Temas separados por espacios" />
+                <input className="composer-tags" value={tagInput} onChange={(event) => setTagInput(event.target.value)} placeholder="Hashtags opcionales: #anecdotas #ideas..." aria-label="Hashtags opcionales separados por espacios" />
               </>}
               {recording ? (
                 <div className="recording-state"><span className="recording-indicator" /> GRABANDO · {formatDuration(recordingSeconds)}<button className="record-button stop-recording" onClick={stopRecording}><Square size={15} fill="currentColor" /> Detener y publicar</button></div>
@@ -301,11 +312,11 @@ export default function App() {
           ) : activeNav === "explore" ? (
             <section className="explore-section">
               <label className="search-box"><Search size={17} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar un hashtag..." /></label>
-              <div className="explore-label">TEMAS PARA EXPLORAR</div>
+              <div className="explore-label">SECCIONES DE VOXURN</div>
               <div className="explore-tags">
                 {filteredTopics.map((topic) => {
-                  const count = posts.filter((post) => post.tags.includes(topic)).length;
-                  return <button className="explore-tag" key={topic} onClick={() => { setActiveTopic(topic); setActiveNav("feed"); }}><span>#{topic}</span><ArrowUpRight size={15} /><small>{count} {count === 1 ? "audio" : "audios"}</small></button>;
+                  const count = posts.filter((post) => (post.topic || "Joker's Club") === topic).length;
+                  return <button className="explore-tag" key={topic} onClick={() => { setActiveTopic(topic); setActiveNav("feed"); }}><span>{topic === "Joker's Club" ? topic : `# ${topic}`}</span><ArrowUpRight size={15} /><small>{count} {count === 1 ? "audio" : "audios"}</small></button>;
                 })}
                 {filteredTopics.length === 0 && <p className="empty-state">No encontramos ese tema.</p>}
               </div>
@@ -313,7 +324,7 @@ export default function App() {
           ) : (
             <>
               <div className="feed-controls">
-                <div className="filter-tabs"><button className={activeTopic === "todos" ? "filter-active" : ""} onClick={() => setActiveTopic("todos")}>todos</button><button onClick={() => void loadPosts()}>actualizar</button></div>
+                <div className="filter-tabs"><button className={activeTopic === "Joker's Club" ? "filter-active" : ""} onClick={() => setActiveTopic("Joker's Club")}>Joker's Club</button><button className={activeTopic === "todos" ? "filter-active" : ""} onClick={() => setActiveTopic("todos")}>todos</button><button onClick={() => void loadPosts()}>actualizar</button></div>
                 <span className="feed-count">VOCES DE LA COMUNIDAD</span>
               </div>
               {isLoading ? <div className="empty-state"><RefreshCw size={18} className="spin-icon" /> Cargando voces...</div>
@@ -329,7 +340,7 @@ export default function App() {
           <div className="rail-card">
             <div className="rail-heading">EN MOVIMIENTO <span className="live-dot" /></div>
             <h3>Conversaciones<br />que están sonando.</h3>
-            {topics.slice(1, 5).map((tag, index) => <button className="trending-row" key={tag} onClick={() => { setActiveTopic(tag); setActiveNav("feed"); }}><span className="trend-number">0{index + 1}</span><span>#{tag}</span><ArrowUpRight size={14} /></button>)}
+            {topics.slice(0, 5).map((tag, index) => <button className="trending-row" key={tag} onClick={() => { setActiveTopic(tag); setActiveNav("feed"); }}><span className="trend-number">0{index + 1}</span><span>{tag}</span><ArrowUpRight size={14} /></button>)}
           </div>
           <div className="manifesto"><span>“</span><p>Acá no importa quién sos. Importa lo que tenés para decir.</p><div>VOXURN MANIFIESTO Nº 001</div></div>
         </aside>
