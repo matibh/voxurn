@@ -73,14 +73,12 @@ function AudioPost({ post, onReply, onTopic, onPlay, currentTrack, isTrackPlayin
       </div>
       {post.text && <p className="post-text">{post.text}</p>}
       <AudioPlayer label="Escuchar publicación" duration={post.duration_seconds} className={!post.text?.trim() ? "editorial-audio-no-text" : ""} active={currentTrack?.src === publicAudioUrl(post.audio_path)} playing={isTrackPlaying} onPlay={() => onPlay(publicAudioUrl(post.audio_path), post.text?.trim() || "Voz anónima", post.topic || "Joker's Club")} />
-      <div className="post-bottom">
-        <div className="tag-list">{post.tags.map((tag) => <span className="tag" key={tag}>#{tag}</span>)}</div>
+      <div className={`post-bottom ${post.tags.length === 0 ? "post-bottom-no-tags" : ""}`}>
+        {post.tags.length > 0 && <div className="tag-list">{post.tags.map((tag) => <span className="tag" key={tag}>#{tag}</span>)}</div>}
         <div className="post-actions">
-          {post.replies.length > 0 && (
-            <button className="reply-link" onClick={() => setShowReplies((value) => !value)}>
-              <Headphones size={14} /> {showReplies ? "Ocultar respuestas" : "Escuchar respuestas"} <span>· {post.replies.length}</span>
-            </button>
-          )}
+          <button className="reply-link" onClick={() => setShowReplies((value) => !value)} disabled={post.replies.length === 0}>
+            <Headphones size={14} /> {showReplies ? "Ocultar respuestas" : "Escuchar respuestas"} <span>· {post.replies.length}</span>
+          </button>
           <button className="reply-link" onClick={() => onReply(post.id)}><Send size={14} /> Responder con audio</button>
         </div>
       </div>
