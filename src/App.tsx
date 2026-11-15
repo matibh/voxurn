@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   AudioLines, Compass, Headphones, Mic, Search, Send, Hash, ArrowUpRight,
-  Plus, Menu, Moon, Sun, Square, X, RefreshCw, Play,
+  Plus, Menu, Moon, Sun, Square, X, RefreshCw, Play, Pause,
 } from "lucide-react";
 import { isSupabaseConfigured, supabase } from "./lib/supabase";
 
@@ -48,16 +48,17 @@ function publicAudioUrl(path: string) {
   return supabase.storage.from("voxurn-audio").getPublicUrl(path).data.publicUrl;
 }
 
-function AudioPlayer({ label, compact = false, onPlay }: { label: string; compact?: boolean; onPlay: () => void }) {
+function AudioPlayer({ label, duration, compact = false, active, playing, onPlay }: { label: string; duration: number; compact?: boolean; active: boolean; playing: boolean; onPlay: () => void }) {
   return (
-    <button type="button" className={`audio-player audio-control audio-control-trigger ${compact ? "audio-control-compact" : ""}`} onClick={onPlay} aria-label={label}>
-      <span className="audio-control-icon"><Play size={12} fill="currentColor" /></span>
-      <span className="audio-control-copy"><strong>Escuchar</strong></span>
+    <button type="button" className={`audio-player editorial-audio ${compact ? "editorial-audio-compact" : ""} ${active ? "editorial-audio-active" : ""}`} onClick={onPlay} aria-label={active && playing ? "Pausar audio" : label}>
+      <span className="editorial-play">{active && playing ? <Pause size={13} fill="currentColor" /> : <Play size={13} fill="currentColor" />}</span>
+      <span className={`editorial-waveform ${active && playing ? "waveform-playing" : ""}`} aria-hidden="true">{[9,15,11,21,14,25,12,18,8,16,23,11,19,8,14,21,10,17,7,13,20,9,15,11].map((height, index) => <i key={index} style={{ height: `${height}px` }} />)}</span>
+      <span className="editorial-duration">{formatDuration(duration)}</span>
     </button>
   );
 }
 
-function AudioPost({ post, onReply, onTopic, onPlay }: { post: Post; onReply: (id: string) => void; onTopic: (topic: string) => void; onPlay: (src: string, title: string, detail: string) => void }) {
+function AudioPost({ post, onReply, onTopic, onPlay, currentTrack, isTrackPlaying }: { post: Post; onReply: (id: string) => void; onTopic: (topic: string) => void; onPlay: (src: string, title: string, detail: string) => void; currentTrack: { src: string; title: string; detail: string } | null; isTrackPlaying: boolean }) {
   const [showReplies, setShowReplies] = useState(false);
   return (
     <article className="post">
@@ -71,7 +72,7 @@ function AudioPost({ post, onReply, onTopic, onPlay }: { post: Post; onReply: (i
         <span className="duration">{formatDuration(post.duration_seconds)}</span>
       </div>
       {post.text && <p className="post-text">{post.text}</p>}
-      <AudioPlayer label="ESCUCHAR PUBLICACIÓN" onPlay={() => onPlay(publicAudioUrl(post.audio_path), post.text?.trim() || "Voz anónima", post.topic || "Joker's Club")} />
+      <AudioPlayer label="Escuchar publicación" duration={post.duration_seconds} active={currentTrack?.src === publicAudioUrl(post.audio_path)} playing={isTrackPlaying} onPlay={() => onPlay(publicAudioUrl(post.audio_path), post.text?.trim() || "Voz anónima", post.topic || "Joker's Club")} />
       <div className="post-bottom">
         <div className="tag-list">{post.tags.map((tag) => <span className="tag" key={tag}>#{tag}</span>)}</div>
         <div className="post-actions">
@@ -89,7 +90,7 @@ function AudioPost({ post, onReply, onTopic, onPlay }: { post: Post; onReply: (i
             <div className="reply-audio" key={reply.id}>
               <span className="reply-anonymous"><AudioLines size={13} /> respuesta anónima</span>
               <span className="duration">{formatDuration(reply.duration_seconds)}</span>
-              <AudioPlayer label="ESCUCHAR RESPUESTA" compact onPlay={() => onPlay(publicAudioUrl(reply.audio_path), "Respuesta anónima", post.topic || "Joker's Club")} />
+              <AudioPlayer label="Escuchar respuesta" duration={reply.duration_seconds} compact active={currentTrack?.src === publicAudioUrl(reply.audio_path)} playing={isTrackPlaying} onPlay={() => onPlay(publicAudioUrl(reply.audio_path), "Respuesta anónima", post.topic || "Joker's Club")} />
             </div>
           ))}
         </div>
@@ -363,7 +364,7 @@ export default function App() {
               {isLoading ? <div className="empty-state"><RefreshCw size={18} className="spin-icon" /> Cargando voces...</div>
                 : loadError ? <div className="empty-state">{loadError}<button className="retry-button" onClick={() => void loadPosts()}>Reintentar</button></div>
                 : visiblePosts.length === 0 ? <div className="empty-state">Todavía no hay voces por acá. Podés ser la primera.</div>
-                : <div className="posts-list">{visiblePosts.map((post) => <AudioPost key={post.id} post={post} onPlay={playTrack} onTopic={(topic) => { setActiveTopic(topic); setActiveNav("feed"); setMenuOpen(false); window.scrollTo({ top: 0, behavior: "smooth" }); }} onReply={(id) => { setReplyTarget(id); setActiveNav("publish"); setActionError(""); }} />)}</div>}
+                : <div className="posts-list">{visiblePosts.map((post) => <AudioPost key={post.id} post={post} onPlay={playTrack} currentTrack={currentTrack} isTrackPlaying={isTrackPlaying} onTopic={(topic) => { setActiveTopic(topic); setActiveNav("feed"); setMenuOpen(false); window.scrollTo({ top: 0, behavior: "smooth" }); }} onReply={(id) => { setReplyTarget(id); setActiveNav("publish"); setActionError(""); }} />)}</div>}
             </>
           )}
           <footer className="footer"><span>VOXURN © 2026</span><span>HECHO PARA ESCUCHAR.</span></footer>
