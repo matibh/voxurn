@@ -345,3 +345,9 @@ button{color:inherit}
 
 /* Dark mode: keep the anonymous voice label clearly readable */
 .theme-dark .post-anonymous{color:#f2f2f2}
+
+
+/* Legal links in the footer */
+.legal-footer-links{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:12px}
+.legal-footer-links a{color:inherit;font-size:10px;text-decoration:underline;text-underline-offset:3px;opacity:.72}
+.legal-footer-links a:hover{opacity:1}
