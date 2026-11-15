@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   AudioLines, Compass, Headphones, Mic, Search, Send, Hash, ArrowUpRight,
-  Plus, Menu, Moon, Sun, Square, X, RefreshCw,
+  Plus, Menu, Moon, Sun, Square, X, RefreshCw, Play,
 } from "lucide-react";
 import { isSupabaseConfigured, supabase } from "./lib/supabase";
 
@@ -48,37 +48,17 @@ function publicAudioUrl(path: string) {
   return supabase.storage.from("voxurn-audio").getPublicUrl(path).data.publicUrl;
 }
 
-function AudioPlayer({ src, label, compact = false }: { src: string; label: string; compact?: boolean }) {
-  const [isPlaying, setIsPlaying] = useState(false);
-
-  const pauseOtherAudio = (current: HTMLAudioElement) => {
-    document.querySelectorAll("audio").forEach((audio) => {
-      if (audio !== current) audio.pause();
-    });
-    setIsPlaying(true);
-  };
-
+function AudioPlayer({ label, compact = false, onPlay }: { label: string; compact?: boolean; onPlay: () => void }) {
   return (
-    <div className={`audio-player real-audio-player audio-control ${compact ? "audio-control-compact" : ""} ${isPlaying ? "audio-is-playing" : ""}`}>
-      <div className="audio-status">
-        <AudioLines size={14} />
-        <span>{isPlaying ? "REPRODUCIENDO" : label}</span>
-        {isPlaying && <span className="audio-live-dot" />}
-      </div>
-      <audio
-        controls
-        preload="none"
-        src={src}
-        aria-label={label}
-        onPlay={(event) => pauseOtherAudio(event.currentTarget)}
-        onPause={() => setIsPlaying(false)}
-        onEnded={() => setIsPlaying(false)}
-      />
-    </div>
+    <button type="button" className={`audio-player audio-control audio-control-trigger ${compact ? "audio-control-compact" : ""}`} onClick={onPlay}>
+      <span className="audio-control-icon"><Play size={15} fill="currentColor" /></span>
+      <span className="audio-control-copy"><strong>{label}</strong><small>ESCUCHAR EN EL REPRODUCTOR</small></span>
+      <AudioLines size={17} />
+    </button>
   );
 }
 
-function AudioPost({ post, onReply, onTopic }: { post: Post; onReply: (id: string) => void; onTopic: (topic: string) => void }) {
+function AudioPost({ post, onReply, onTopic, onPlay }: { post: Post; onReply: (id: string) => void; onTopic: (topic: string) => void; onPlay: (src: string, title: string, detail: string) => void }) {
   const [showReplies, setShowReplies] = useState(false);
   return (
     <article className="post">
@@ -92,7 +72,7 @@ function AudioPost({ post, onReply, onTopic }: { post: Post; onReply: (id: strin
         <span className="duration">{formatDuration(post.duration_seconds)}</span>
       </div>
       {post.text && <p className="post-text">{post.text}</p>}
-      <AudioPlayer src={publicAudioUrl(post.audio_path)} label="AUDIO DE LA PUBLICACIÓN" />
+      <AudioPlayer label="ESCUCHAR PUBLICACIÓN" onPlay={() => onPlay(publicAudioUrl(post.audio_path), post.text?.trim() || "Voz anónima", post.topic || "Joker's Club")} />
       <div className="post-bottom">
         <div className="tag-list">{post.tags.map((tag) => <span className="tag" key={tag}>#{tag}</span>)}</div>
         <div className="post-actions">
@@ -110,7 +90,7 @@ function AudioPost({ post, onReply, onTopic }: { post: Post; onReply: (id: strin
             <div className="reply-audio" key={reply.id}>
               <span className="reply-anonymous"><AudioLines size={13} /> respuesta anónima</span>
               <span className="duration">{formatDuration(reply.duration_seconds)}</span>
-              <AudioPlayer src={publicAudioUrl(reply.audio_path)} label="RESPUESTA DE AUDIO" compact />
+              <AudioPlayer label="ESCUCHAR RESPUESTA" compact onPlay={() => onPlay(publicAudioUrl(reply.audio_path), "Respuesta anónima", post.topic || "Joker's Club")} />
             </div>
           ))}
         </div>
@@ -126,6 +106,9 @@ export default function App() {
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("voxurn-theme") === "dark");
   const [menuOpen, setMenuOpen] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [currentTrack, setCurrentTrack] = useState<{ src: string; title: string; detail: string } | null>(null);
+  const [isTrackPlaying, setIsTrackPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const [postText, setPostText] = useState("");
@@ -274,6 +257,28 @@ export default function App() {
     }
   };
 
+  const playTrack = (src: string, title: string, detail: string) => {
+    const audio = audioRef.current;
+    if (!audio || !src) return;
+    if (currentTrack?.src === src) {
+      if (audio.paused) void audio.play().catch(() => setIsTrackPlaying(false));
+      else audio.pause();
+      return;
+    }
+    audio.pause();
+    audio.src = src;
+    audio.load();
+    setCurrentTrack({ src, title, detail });
+    void audio.play().then(() => setIsTrackPlaying(true)).catch(() => setIsTrackPlaying(false));
+  };
+
+  const closePlayer = () => {
+    audioRef.current?.pause();
+    if (audioRef.current) audioRef.current.removeAttribute("src");
+    setCurrentTrack(null);
+    setIsTrackPlaying(false);
+  };
+
   const visiblePosts = posts.filter((post) => activeTopic === "todos" || (post.topic || "Joker's Club") === activeTopic);
   const filteredTopics = topics.filter((topic) => topic.toLowerCase().includes(search.toLowerCase()));
 
@@ -359,7 +364,7 @@ export default function App() {
               {isLoading ? <div className="empty-state"><RefreshCw size={18} className="spin-icon" /> Cargando voces...</div>
                 : loadError ? <div className="empty-state">{loadError}<button className="retry-button" onClick={() => void loadPosts()}>Reintentar</button></div>
                 : visiblePosts.length === 0 ? <div className="empty-state">Todavía no hay voces por acá. Podés ser la primera.</div>
-                : <div className="posts-list">{visiblePosts.map((post) => <AudioPost key={post.id} post={post} onTopic={(topic) => { setActiveTopic(topic); setActiveNav("feed"); setMenuOpen(false); window.scrollTo({ top: 0, behavior: "smooth" }); }} onReply={(id) => { setReplyTarget(id); setActiveNav("publish"); setActionError(""); }} />)}</div>}
+                : <div className="posts-list">{visiblePosts.map((post) => <AudioPost key={post.id} post={post} onPlay={playTrack} onTopic={(topic) => { setActiveTopic(topic); setActiveNav("feed"); setMenuOpen(false); window.scrollTo({ top: 0, behavior: "smooth" }); }} onReply={(id) => { setReplyTarget(id); setActiveNav("publish"); setActionError(""); }} />)}</div>}
             </>
           )}
           <footer className="footer"><span>VOXURN © 2026</span><span>HECHO PARA ESCUCHAR.</span></footer>
@@ -373,6 +378,15 @@ export default function App() {
           </div>
           <div className="manifesto"><span>“</span><p>Acá no importa quién sos. Importa lo que tenés para decir.</p><div>VOXURN MANIFIESTO Nº 001</div></div>
         </aside>
+      </div>
+
+      <div className={`mini-player ${currentTrack ? "mini-player-visible" : "mini-player-hidden"}`} role="region" aria-label="Reproductor de audio" aria-hidden={!currentTrack}>
+        <div className="mini-player-info">
+          <span className="mini-player-icon"><AudioLines size={17} /></span>
+          <div className="mini-player-text"><strong>{currentTrack?.title || "Voxurn"}</strong><span>{currentTrack ? `${currentTrack.detail} · ${isTrackPlaying ? "REPRODUCIENDO" : "EN PAUSA"}` : "Elegí un audio para escuchar"}</span></div>
+          {currentTrack && <button type="button" className="mini-player-close" onClick={closePlayer} aria-label="Cerrar reproductor"><X size={17} /></button>}
+        </div>
+        <audio ref={audioRef} className="mini-player-controls" controls preload="none" onPlay={() => setIsTrackPlaying(true)} onPause={() => setIsTrackPlaying(false)} onEnded={() => setIsTrackPlaying(false)} />
       </div>
 
       <nav className="mobile-nav">
