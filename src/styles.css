@@ -319,3 +319,8 @@ button{color:inherit}
 .theme-dark .editorial-audio-active .editorial-waveform i{background:#bbb;}
 .theme-dark .editorial-duration{color:#aaa;}
 @media(max-width:700px){.editorial-audio{height:50px;min-height:50px;padding:0 11px}.editorial-waveform{gap:2px}.editorial-audio-compact{height:41px;min-height:41px}}
+
+
+/* Let the waveform occupy all remaining player width */
+.editorial-waveform{flex:1;min-width:0;width:0;max-width:none;justify-content:space-between;}
+.editorial-audio-compact .editorial-waveform{flex:1;min-width:0;width:0;max-width:none;}
