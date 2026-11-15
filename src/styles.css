@@ -324,3 +324,7 @@ button{color:inherit}
 /* Let the waveform occupy all remaining player width */
 .editorial-waveform{flex:1;min-width:0;width:0;max-width:none;justify-content:space-between;}
 .editorial-audio-compact .editorial-waveform{flex:1;min-width:0;width:0;max-width:none;}
+
+
+/* Give textless voice posts breathing room below the metadata */
+.editorial-audio-no-text{margin-top:12px;}
