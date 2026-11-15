@@ -300,3 +300,22 @@ button{color:inherit}
 .theme-dark .editorial-waveform i{background:#777}
 .theme-dark .editorial-audio-active .editorial-waveform i{background:#eee}
 @media(max-width:700px){.editorial-audio{min-height:44px;height:44px;gap:11px}.editorial-waveform{max-width:none;gap:2px}.editorial-waveform i{width:2px;min-width:2px}}
+
+
+/* WhatsApp-inspired simple voice note */
+.editorial-audio{width:100%;height:54px;min-height:54px;padding:0 13px;gap:12px;border:0;border-radius:12px;background:#f1f1f1;opacity:1;}
+.editorial-audio:hover{opacity:.88}
+.editorial-play{width:31px;height:31px;border:0;background:#111;color:#fff;}
+.editorial-waveform{height:26px;max-width:none;gap:3px;justify-content:flex-start;}
+.editorial-waveform i{width:2px;min-width:2px;background:#999;border-radius:2px;opacity:1;animation:none!important;transform:none!important;}
+.editorial-audio-active .editorial-waveform i{background:#555;}
+.editorial-duration{font-size:11px;color:#777;margin-left:auto;}
+.editorial-audio-compact{height:43px;min-height:43px;padding:0 10px;gap:9px;border-radius:10px;}
+.editorial-audio-compact .editorial-play{width:27px;height:27px;}
+.editorial-audio-compact .editorial-waveform{height:23px;}
+.theme-dark .editorial-audio{background:#242424;}
+.theme-dark .editorial-play{background:#eee;color:#111;}
+.theme-dark .editorial-waveform i{background:#777;}
+.theme-dark .editorial-audio-active .editorial-waveform i{background:#bbb;}
+.theme-dark .editorial-duration{color:#aaa;}
+@media(max-width:700px){.editorial-audio{height:50px;min-height:50px;padding:0 11px}.editorial-waveform{gap:2px}.editorial-audio-compact{height:41px;min-height:41px}}
