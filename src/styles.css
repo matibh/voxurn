@@ -201,3 +201,20 @@ button{color:inherit}
   .composer-text,.composer-tags{max-width:none}
   .reply-audio{min-width:0}
 }
+
+
+/* Topic-based community sections */
+.topic-picker-label{display:block;width:100%;max-width:440px;margin:25px 0 8px;text-align:left;font:10px 'DM Mono',monospace;letter-spacing:1px;color:#888}
+.topic-picker{display:block;width:100%;max-width:440px;height:44px;padding:0 12px;border:1px solid var(--line);border-radius:0;background:transparent;color:inherit;font:12px 'DM Sans',sans-serif;text-align:left}
+.topic-picker:focus{outline:1px solid #888;outline-offset:1px}
+.topic-picker option{background:#fff;color:#111}
+.category-label{display:inline-flex;align-items:center;padding:5px 8px;background:#111;color:#fff;font-size:10px;font-weight:600}
+.explore-tag{min-height:88px;align-content:start}
+.topic-item{line-height:1.35}
+.sidebar{overflow-y:auto;scrollbar-width:thin}
+.sidebar-note{position:relative;bottom:auto;margin:30px 8px 20px}
+.theme-dark .topic-picker{border-color:#444;color:#eee;color-scheme:dark}
+.theme-dark .topic-picker option{background:#171717;color:#eee}
+.theme-dark .category-label{background:#eee;color:#111}
+.theme-dark .topic-picker-label{color:#999}
+@media(max-width:700px){.topic-picker-label,.topic-picker{max-width:none}.sidebar-note{display:none}}
