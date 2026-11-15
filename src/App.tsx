@@ -99,6 +99,8 @@ export default function App() {
   const [activeNav, setActiveNav] = useState("feed");
   const [search, setSearch] = useState("");
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("voxurn-theme") === "dark");
+  const [ageConfirmed, setAgeConfirmed] = useState(() => sessionStorage.getItem("voxurn-age-confirmed") === "yes");
+  const [ageDeclined, setAgeDeclined] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
   const [currentTrack, setCurrentTrack] = useState<{ src: string; title: string; detail: string } | null>(null);
@@ -276,6 +278,24 @@ export default function App() {
 
   const visiblePosts = posts.filter((post) => activeTopic === "todos" || (post.topic || "Joker's Club") === activeTopic);
   const filteredTopics = topics.filter((topic) => topic.toLowerCase().includes(search.toLowerCase()));
+
+  if (!ageConfirmed) {
+    return (
+      <main className="age-gate">
+        <div className="age-gate-card">
+          <div className="age-gate-wordmark">VOXURN<span>.</span></div>
+          <div className="age-gate-kicker">ACCESO RESTRINGIDO</div>
+          <h1>Un espacio para mayores de 18 años.</h1>
+          <p>Voxurn está destinado exclusivamente a personas adultas. Para continuar, confirmá que tenés 18 años o más.</p>
+          {ageDeclined ? <p className="age-gate-denied" role="status">No podés acceder a Voxurn si tenés menos de 18 años.</p> : null}
+          <button className="age-gate-confirm" onClick={() => { sessionStorage.setItem("voxurn-age-confirmed", "yes"); setAgeConfirmed(true); }}>Tengo 18 años o más · Entrar</button>
+          <button className="age-gate-decline" onClick={() => setAgeDeclined(true)}>No tengo 18 años</button>
+          <p className="age-gate-legal">Al ingresar declarás que cumplís la edad mínima y aceptás los <a href="/voxurn/legal/#terminos">Términos</a> y la <a href="/voxurn/legal/#privacidad">Política de privacidad</a>.</p>
+          <p className="age-gate-caveat">La confirmación es una declaración de edad; no constituye verificación documental ni garantiza por sí sola que un menor no pueda mentir.</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <div className={`app-shell ${darkMode ? "theme-dark" : ""}`}>
