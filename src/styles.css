@@ -159,3 +159,45 @@ button{color:inherit}
   .theme-dark .mobile-menu-panel button{color:#eee}
   .theme-dark .mobile-menu-divider{background:#333}
 }
+
+
+/* Functional audio publishing */
+.real-audio-player{height:auto;min-height:48px;padding:7px 10px}
+.real-audio-player audio{display:block;width:100%;height:36px;min-width:0}
+.post-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.replies-list{margin-top:16px;padding:12px 0 0 16px;border-left:2px solid var(--line);display:flex;flex-direction:column;gap:13px}
+.reply-audio{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.reply-anonymous{display:flex;align-items:center;gap:7px;color:#888;font-size:10px}
+.reply-audio audio{grid-column:1/-1;width:100%;height:34px}
+.composer-text,.composer-tags{display:block;width:100%;max-width:440px;border:1px solid var(--line);background:transparent;color:inherit;padding:12px 13px;font:12px 'DM Sans',sans-serif;outline:none}
+.composer-text{min-height:92px;resize:vertical;margin-top:25px;line-height:1.5}
+.composer-tags{margin-top:9px}
+.composer-text:focus,.composer-tags:focus{border-color:#888}
+.composer-text::placeholder,.composer-tags::placeholder{color:#999}
+.record-button:disabled{opacity:.55;cursor:wait}
+.recording-state{display:flex;flex-direction:column;align-items:center;gap:13px;margin-top:25px;font:11px 'DM Mono',monospace;letter-spacing:.8px}
+.recording-indicator{width:9px;height:9px;border-radius:50%;background:#111;display:inline-block;animation:record-pulse 1s infinite}
+.stop-recording{margin-top:0}
+@keyframes record-pulse{50%{opacity:.25}}
+.status-message{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;margin:18px 0;border:1px solid var(--line);font-size:12px;line-height:1.5}
+.error-message{border-color:#999}
+.status-message button{display:grid;place-items:center;flex:none;border:0;background:transparent;color:inherit;cursor:pointer;padding:3px}
+.empty-state{min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;text-align:center;padding:30px 15px;color:#888;font-size:12px;line-height:1.6}
+.retry-button,.cancel-reply{border:1px solid var(--line);background:transparent;color:inherit;padding:9px 13px;font-size:11px;cursor:pointer}
+.cancel-reply{margin-top:18px;border:0;text-decoration:underline;color:#888}
+.spin-icon{animation:spin 1.4s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.theme-dark .real-audio-player{background:#1d1d1d}
+.theme-dark .real-audio-player audio{color-scheme:dark}
+.theme-dark .composer-text,.theme-dark .composer-tags{color:#eee;border-color:#444}
+.theme-dark .recording-indicator{background:#eee}
+.theme-dark .status-message{border-color:#555}
+.theme-dark .retry-button{border-color:#555}
+.theme-dark .cancel-reply{color:#aaa}
+@media(max-width:700px){
+  .post-actions{width:100%;justify-content:space-between;gap:9px}
+  .post-actions .reply-link{font-size:10px}
+  .composer-card{padding:34px 16px}
+  .composer-text,.composer-tags{max-width:none}
+  .reply-audio{min-width:0}
+}
