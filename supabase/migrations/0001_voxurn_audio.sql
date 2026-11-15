@@ -24,6 +24,10 @@ create index if not exists replies_post_id_created_at_idx on public.replies (pos
 alter table public.posts enable row level security;
 alter table public.replies enable row level security;
 
+-- Table privileges are required in addition to the RLS policies below.
+grant usage on schema public to anon, authenticated;
+grant select, insert on table public.posts, public.replies to anon, authenticated;
+
 drop policy if exists "Anyone can read posts" on public.posts;
 create policy "Anyone can read posts"
   on public.posts for select to anon, authenticated using (true);
