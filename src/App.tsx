@@ -48,9 +48,9 @@ function publicAudioUrl(path: string) {
   return supabase.storage.from("voxurn-audio").getPublicUrl(path).data.publicUrl;
 }
 
-function AudioPlayer({ label, duration, compact = false, active, playing, onPlay }: { label: string; duration: number; compact?: boolean; active: boolean; playing: boolean; onPlay: () => void }) {
+function AudioPlayer({ label, duration, compact = false, active, playing, onPlay, className = "" }: { label: string; duration: number; compact?: boolean; active: boolean; playing: boolean; onPlay: () => void; className?: string }) {
   return (
-    <button type="button" className={`audio-player editorial-audio ${compact ? "editorial-audio-compact" : ""} ${active ? "editorial-audio-active" : ""}`} onClick={onPlay} aria-label={active && playing ? "Pausar audio" : label}>
+    <button type="button" className={`audio-player editorial-audio ${compact ? "editorial-audio-compact" : ""} ${active ? "editorial-audio-active" : ""} ${className}`} onClick={onPlay} aria-label={active && playing ? "Pausar audio" : label}>
       <span className="editorial-play">{active && playing ? <Pause size={13} fill="currentColor" /> : <Play size={13} fill="currentColor" />}</span>
       <span className={`editorial-waveform ${active && playing ? "waveform-playing" : ""}`} aria-hidden="true">{[9,15,11,21,14,25,12,18,8,16,23,11,19,8,14,21,10,17,7,13,20,9,15,11].map((height, index) => <i key={index} style={{ height: `${height}px` }} />)}</span>
       <span className="editorial-duration">{formatDuration(duration)}</span>
@@ -72,7 +72,7 @@ function AudioPost({ post, onReply, onTopic, onPlay, currentTrack, isTrackPlayin
         <span className="duration">{formatDuration(post.duration_seconds)}</span>
       </div>
       {post.text && <p className="post-text">{post.text}</p>}
-      <AudioPlayer label="Escuchar publicación" duration={post.duration_seconds} active={currentTrack?.src === publicAudioUrl(post.audio_path)} playing={isTrackPlaying} onPlay={() => onPlay(publicAudioUrl(post.audio_path), post.text?.trim() || "Voz anónima", post.topic || "Joker's Club")} />
+      <AudioPlayer label="Escuchar publicación" duration={post.duration_seconds} className={!post.text?.trim() ? "editorial-audio-no-text" : ""} active={currentTrack?.src === publicAudioUrl(post.audio_path)} playing={isTrackPlaying} onPlay={() => onPlay(publicAudioUrl(post.audio_path), post.text?.trim() || "Voz anónima", post.topic || "Joker's Club")} />
       <div className="post-bottom">
         <div className="tag-list">{post.tags.map((tag) => <span className="tag" key={tag}>#{tag}</span>)}</div>
         <div className="post-actions">
