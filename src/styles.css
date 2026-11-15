@@ -328,3 +328,8 @@ button{color:inherit}
 
 /* Give textless voice posts breathing room below the metadata */
 .editorial-audio-no-text{margin-top:12px;}
+
+
+/* Balance spacing around the inline audio player */
+.post-text{margin-bottom:12px;}
+.post-bottom{margin-top:12px;}
